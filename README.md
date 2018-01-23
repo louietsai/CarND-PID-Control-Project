@@ -22,14 +22,24 @@ Instead of using recursive functions, I parameterized the change rate of each pa
               pid.change_pattern_index +=1;
 
 therefore, the parameters will be changed within a range, and it will find the smaller CTE within those range.
-  Kp_:0.378757 ,Kd_:3.01556 ,Ki_:0.00401556
-  Kp_:0.478757 ,Kd_:3.01556 ,Ki_:0.00401556
-  Kp_:0.298757 ,Kd_:3.01556 ,Ki_:0.00401556
-  Kp_:0.379757 ,Kd_:3.01556 ,Ki_:0.00401556
-  Kp_:0.379757 ,Kd_:3.91556 ,Ki_:0.00401556
-  Kp_:0.468857 ,Kd_:3.91556 ,Ki_:0.00401556
-  Kp_:0.566867 ,Kd_:3.91556 ,Ki_:0.00401556
-  Kp_:0.390449 ,Kd_:3.91556 ,Ki_:0.00401556
+
+Kp_:0.378757 ,Kd_:3.01556 ,Ki_:0.00401556
+
+Kp_:0.478757 ,Kd_:3.01556 ,Ki_:0.00401556
+
+Kp_:0.298757 ,Kd_:3.01556 ,Ki_:0.00401556
+
+Kp_:0.379757 ,Kd_:3.01556 ,Ki_:0.00401556
+
+Kp_:0.379757 ,Kd_:3.91556 ,Ki_:0.00401556
+
+Kp_:0.468857 ,Kd_:3.91556 ,Ki_:0.00401556
+
+Kp_:0.566867 ,Kd_:3.91556 ,Ki_:0.00401556
+
+Kp_:0.390449 ,Kd_:3.91556 ,Ki_:0.00401556
+
+  
 after 30 runs, I used below parameters as the initial parameters.
 Kp (Proportional Controller) : 0.379757
 Kd (Derivative Controller) : 3.01556
