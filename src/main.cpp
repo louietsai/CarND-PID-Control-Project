@@ -4,6 +4,7 @@
 #include "PID.h"
 #include <math.h>
 
+#define MAX_FRAME_NUM 1600
 // for convenience
 using json = nlohmann::json;
 
@@ -33,8 +34,21 @@ int main()
   uWS::Hub h;
 
   PID pid;
+  //double best_err = 0;
+  pid.param[0] = 0.379757;//0.12;
+  pid.param[1] = 3.01556;
+  pid.param[2] = 0.00401556;
+  pid.dparam[0] = 0.1;
+  pid.dparam[1] = 1.0;
+  pid.dparam[2] = 0.001;
+  pid.dparam_change_pattern[0] = 1;
+  pid.dparam_change_pattern[1] = -2;
+  pid.dparam_change_pattern[2] = 1;
+  //, 3.0, 0.004};
+  //double dparam[3] = [0,0,0];
+
   // TODO: Initialize the pid variable.
-  pid.Init(0.12, 3.0, 0.004);
+  pid.Init(pid.param[0], pid.param[1], pid.param[2]);
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -48,6 +62,7 @@ int main()
         std::string event = j[0].get<std::string>();
         if (event == "telemetry") {
           // j[1] is the data JSON object
+          //std::string data = j[1].get<std::string>();
           double cte = std::stod(j[1]["cte"].get<std::string>());
           double speed = std::stod(j[1]["speed"].get<std::string>());
           double angle = std::stod(j[1]["steering_angle"].get<std::string>());
@@ -60,10 +75,50 @@ int main()
           */
 
           // DEBUG
-          std::cout << "        [Debug] cte: " << cte << " ,speed: " << speed << " ,angle: "  << angle << std::endl;
+          //std::cout << "        [Debug] cte: " << cte << " ,speed: " << speed << " ,angle: "  << angle << std::endl;
           pid.UpdateError(cte);
           steer_value = pid.TotalError();
-          std::cout << "        [Debug] CTE: " << cte << " Steering Value: " << steer_value << std::endl;
+
+          if (pid.total_frame < MAX_FRAME_NUM){
+                pid.total_frame += 1;
+          }
+          else{
+                pid.total_frame = 0;
+                //update param with dparam
+                // pattern {1,-2,1}
+
+                std::cout << " best_err: " << pid.best_err << " ,twiddle_error: " << pid.twiddle_error<< std::endl;
+                if (pid.best_err == 0){
+                        pid.best_err = pid.twiddle_error;
+                }else{
+                        if (pid.twiddle_error < pid.best_err){
+                                //Better
+                                pid.best_err = pid.twiddle_error;
+                                //dp[i] *= 1.1
+                                pid.param_index = 0;
+                                pid.change_pattern_index = 0;
+                                pid.dparam[pid.param_index] *= 1.1;
+                        }
+                        else{
+                                // Move param pattern
+                                //p[i] += pattern * dp[i]
+                                // last pattern
+                                //dp[i] *= 0.9
+                                pid.dparam[pid.param_index] *= 0.9;
+                        }
+                }
+                pid.param[pid.param_index] += pid.dparam_change_pattern[pid.change_pattern_index] * pid.dparam[pid.param_index];
+                pid.change_pattern_index +=1;
+                if (pid.change_pattern_index > 2){
+                        pid.change_pattern_index = 0;
+                        pid.param_index +=1;
+                        if (pid.param_index > 2){
+                                pid.param_index = 0;
+                        }
+                }
+                pid.Init(pid.param[0], pid.param[1], pid.param[2]);
+          }
+          //std::cout << "        [Debug] CTE: " << cte << " Steering Value: " << steer_value << std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;

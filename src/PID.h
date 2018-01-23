@@ -9,6 +9,8 @@ public:
   double p_error;
   double i_error;
   double d_error;
+  double twiddle_error_sum;
+  double twiddle_error;
 
   /*
   * Coefficients
@@ -17,10 +19,20 @@ public:
   double Ki;
   double Kd;
 
+  double n_cte;
   double prev_cte;
   double diff_cte;
   double int_cte;
 
+  double total_frame;
+
+  double param[3];
+  double dparam[3];
+  double dparam_change_pattern[3];
+
+  int param_index;
+  int change_pattern_index;
+  double best_err;
   /*
   * Constructor
   */

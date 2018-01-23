@@ -1,6 +1,6 @@
 #include "PID.h"
 #include <iostream>
-
+#include <math.h>
 using namespace std;
 
 /*
@@ -17,12 +17,20 @@ PID::PID() {
         p_error= 0;
         i_error = 0;
         d_error = 0;
+        twiddle_error_sum = 0;
+        twiddle_error = 0;
+        n_cte = 0;
+        total_frame = 0;
+        //param[] = {0.12, 3.0, 0.004};
+        param_index = 0;
+        change_pattern_index = 0;
+        best_err = 0;
 }
 
 PID::~PID() {}
 
 void PID::Init(double Kp_, double Kd_, double Ki_) {
-        std::cout << " into PID::Init" << std::endl;
+        std::cout << " into PID::Init" << " ,Kp_:"<<Kp_<<" ,Kd_:"<<Kd_<<" ,Ki_:"<<Ki_<< std::endl;
         Kp = Kp_;
         Ki = Ki_;
         Kd = Kd_;
@@ -38,6 +46,10 @@ void PID::UpdateError(double cte) {
         p_error = Kp * cte;
         d_error = Kd * diff_cte;
         i_error = Ki * int_cte;
+        n_cte += 1;
+        twiddle_error_sum += pow(cte,2);
+        twiddle_error = twiddle_error_sum/n_cte;
+        //std::cout << "  pid:update error , twiddle_error: "<<twiddle_error << " number of CTE :"<< n_cte << std::endl;
 	return;
 
 }
