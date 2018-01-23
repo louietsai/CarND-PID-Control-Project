@@ -2,7 +2,24 @@
 Self-Driving Car Engineer Nanodegree Program
 
 ---
+Overview
+---
+The goal of this project to implement PID controller in C++. The parameters of PID were tuned to achieve smaller cross track error.
 
+Two PID controllers were used, one to control the steering of the car and other one to control the throttle of the car
+
+Parameter Tuning
+---
+Background:
+* Proportional Controller: This part of the controller has an immediate effect in proportion to error.  If the value is too high, let's say for steering controller, we would observe the car swerve around.
+* Integral Controller: This part adjusts for constant noise or offset of the system. This value is typical low. A high value for steering controller would simply make the car leave the track to one side in the beginning. 
+* Derivative Controller: This part of the controller corrects for the error from the previous state. This way the Proportional controller can have a lower value and the remaining correction is done by the Derivative controller. This leads to smoother steering. 
+
+For Parameter Tuning, I implemented the twiddle algorithm. 
+
+.
+
+Afterwards I tuned the parameters for the speed controller using a similar approach.
 ## Dependencies
 
 * cmake >= 3.5
